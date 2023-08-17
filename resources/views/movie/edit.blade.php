@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Movies - Add</title>
+    <title>Movies - Edit</title>
     @vite('resources/css/app.css')
 </head>
 
 <body>
     <div class="w-[100dvw] h-[100dvh] flex items-center justify-center flex-col">
-        <a href="list" class="btn btn-circle btn-outline absolute top-2 left-2">
+        <a href="../list" class="btn btn-circle btn-outline absolute top-2 left-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </a>
-        <h1 class="text-3xl mb-[2rem] text-primary font-bold ">Add a Movie</h1>
+        <h1 class="text-3xl mb-[2rem] text-primary font-bold ">Edit a Movie</h1>
 
         @if ($errors)
         <div class="toast toast-top toast-end">
@@ -40,14 +40,16 @@
         <form action="{{ url()->current() }}" method="post" enctype="multipart/form-data"
             class="grid grid-cols-2 grid-rows-auto grid-flow-row gap-2 w-[50vw]">
             @csrf
+            <input type="hidden" name="oldImg" value="{{ isset($data) ? $data->img : ''}}">
+            <input type="hidden" name="id" value="{{ isset($data) ? $data->id : ''}}">
             <div class="form-control w-full max-w-lg">
-                <input value="{{ old('name', $newData->name ?? '') }}" type="text" name="name"
+                <input value="{{ isset($data) ? $data->name : '' }}" type="text" name="name"
                     placeholder="Movie's name" class="input input-bordered w-full max-w-lg" />
             </div>
-            <input value="{{ old('year', $newData->year ?? '') }}" type="text" maxlength="4" minlength="4" name="year"
+            <input value="{{ isset($data) ? $data->year : '' }}" type="text" maxlength="4" minlength="4" name="year"
                 placeholder="Year of Publication" class="input input-bordered w-full max-w-lg" />
             <div class="form-control w-full max-w-lg">
-                <select value="{{ old('category_id', $newData->category_id ?? '') }}" name="category_id"
+                <select value="{{ isset($data) ?  $data->category_id : '' }}" name="category_id"
                     class="select select-bordered w-full max-w-lg">
                     <option disabled selected>Category</option>
                     @foreach ($categories as $c)
@@ -56,12 +58,12 @@
                 </select>
             </div>
             <div class="form-control w-full max-w-lg">
-                <input value="{{ old('link', $newData->link ?? '') }}" type="text" name="link" placeholder="Trailer's Link"
+                <input value="{{ isset($data) ? $data->link : '' }}" type="text" name="link" placeholder="Trailer's Link"
                     class="input input-bordered w-full max-w-lg" />
             </div>
-            <textarea value="{{ old('synopsis', $newData->synopsis ?? '') }}"
-                class="textarea textarea-bordered col-span-2" name="synopsis" placeholder="Synopsis"></textarea>
-            <input value="{{ old('img', $newData->img ?? '') }}" type="file" name='img'
+            <textarea
+                class="textarea textarea-bordered col-span-2" name="synopsis" placeholder="Synopsis">{{ isset($data) ? $data->synopsis : '' }}</textarea>
+            <input type="file" name='img'
                 class="file-input file-input-bordered w-full col-span-2 file-input-primary" />
             <input type="submit" value="Submit" class="btn bg-primary w-full mt-2 col-span-2" />
         </form>

@@ -34,9 +34,19 @@ Route::prefix('/register')->group(function () {
 Route::prefix('/movies')->middleware('auth')->group(function () {
     Route::get('add', [MovieController::class, 'add'])->name('adm.movie.add');
     Route::post('add', [MovieController::class, 'add']);
-    Route::get('list', [MovieController::class, 'listADM'])->name('adm.movie.list');
+    Route::get('edit/{id}', [MovieController::class, 'edit'])->name('adm.movie.edit');
+    Route::post('edit/{id}', [MovieController::class, 'edit']);
+    Route::get('delete/{id}', [MovieController::class, 'delete'])->name('adm.movie.delete');
+    Route::post('delete/{id}', [MovieController::class, 'delete']);
+});
+
+Route::prefix('/movies')->group(function () {
+    Route::get('list', [MovieController::class, 'listADM'])->name('movie.list');
     Route::post('list', [MovieController::class, 'listADM']);
 });
+
+// Route::get('/', function () {
+// });
 
 Route::get('/movie', function () {
     return view('adm.movie.add');

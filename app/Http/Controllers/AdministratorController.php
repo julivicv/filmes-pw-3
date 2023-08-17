@@ -18,7 +18,7 @@ class AdministratorController extends Controller
             ]);
 
             if (Auth::attempt($adm)) {
-                return redirect()->intended('adm.movie.list');
+                return redirect()->intended('movie.list');
             } else {
                 return redirect()->route('adm.login')->with('err', 'Something went wrong!');
             }
@@ -36,13 +36,13 @@ class AdministratorController extends Controller
 
             $adm['password'] = Hash::make($adm['password']);
             Administrator::create($adm);
-            return redirect()->route('adm.movie.list');
+            return redirect()->route('movie.list');
         }
         return view('register');
     }
 
     public function logout() {
         Auth::logout();
-        return redirect()->route('adm.movie.list');
+        return redirect()->route('movie.list');
     }
 }
