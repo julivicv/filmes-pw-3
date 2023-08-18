@@ -24,6 +24,13 @@
     @endif
     <div class="w-[100dvw] h-[100dvh] flex items-center justify-center flex-col">
 
+        <a href="movies/list" class="btn btn-circle btn-outline absolute top-2 left-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </a>
+
         <h1 class="text-3xl text-primary font-bold">Register</h1>
 
 

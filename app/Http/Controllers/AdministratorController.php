@@ -18,7 +18,7 @@ class AdministratorController extends Controller
             ]);
 
             if (Auth::attempt($adm)) {
-                return redirect()->intended('movie.list');
+                return redirect()->intended('movies/list');
             } else {
                 return redirect()->route('adm.login')->with('err', 'Something went wrong!');
             }

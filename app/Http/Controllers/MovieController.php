@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\DB;
+use Illuminate\Support\Facades\File;
 use App\Models\Category;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Mockery\Undefined;
 
 class MovieController extends Controller
 {
@@ -22,7 +23,12 @@ class MovieController extends Controller
                 'img' => 'required|image',
             ]);
             $path = Storage::putFile('covers', $data->file('img'));
-            Movie::create([...$newData, 'img' => $path]);
+            preg_match(
+                '/[\\?\\&]v=([^\\?\\&]+)/',
+                $newData['link'],
+                $link
+            );
+            Movie::create([...$newData, 'img' => $path, 'link' => $link[1],]);
             return redirect()->route('movie.list');
         } else {
             $categories = Category::all();
@@ -46,7 +52,7 @@ class MovieController extends Controller
                 'img' => 'image',
             ]);
             if (isset($newData['img'])) {
-                $path = Storage::putFile('covers', $data->file('img'));
+                $path = Storage::putFile('/public/covers', $data->file('img'));
                 Storage::delete('oldImg');
             } else {
                 $path = $newData['oldImg'];
@@ -65,27 +71,31 @@ class MovieController extends Controller
         }
     }
 
-    public function listADM(Request $filter)
+    public function delete($id)
+    {
+        $movie = Movie::find($id);
+        $test = File::delete(public_path($movie->img));
+        Movie::where('id', '=', $id)->delete();
+        return redirect()->route('movie.list');
+    }
+
+    public function list(Request $filter)
     {
         if ($filter->isMethod('POST')) {
-            $validFilter = $filter->validate([
-                'year' => 'numeric',
-                'category_id' => 'numeric',
-            ]);
             $finalFilter = [];
             $year = '';
             $cID = '';
 
-            isset($validFilter['year']) ? $year = $validFilter['year'] : "";
-            isset($validFilter['category_id']) ? $cID = $validFilter['category_id'] : "";
+            isset($filter['year']) ? $year = $filter['year'] : "";
+            isset($filter['category_id']) ? $cID = $filter['category_id'] : "";
 
             if ($year !== '') {
                 $finalFilter[] = ['year', 'LIKE', "%{$year}%"];
             }
             if ($cID !== '') {
-                $finalFilter[] = ['category_id', '=', $cID];
+                $finalFilter[] = ['category_id', '=', strval($cID)];
             }
-            $movies = Movie::where($finalFilter);
+            $movies = Movie::where($finalFilter)->paginate();
             $records = Movie::where($finalFilter)->count();
             $categories = Category::all();
             return view('movie.list', [
@@ -103,5 +113,18 @@ class MovieController extends Controller
                 'rec' => $records,
             ]);
         }
+    }
+
+    public function movieInfo($id)
+    {
+        $mov = Movie::find($id);
+        $category = Category::find($mov->category_id);
+        $categories = Category::all();
+        $c = $category->name;
+        return view('movie.view', [
+            'mov' => $mov,
+            'cat' => $categories,
+            'sc' => $c,
+        ]);
     }
 }

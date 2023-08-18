@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('movie.list');
 });
 
 
@@ -30,6 +30,7 @@ Route::prefix('/register')->group(function () {
     Route::post('', [AdministratorController::class, 'register']);
 });
 
+Route::get('/logout', [AdministratorController::class, 'logout'])->name('logout');
 
 Route::prefix('/movies')->middleware('auth')->group(function () {
     Route::get('add', [MovieController::class, 'add'])->name('adm.movie.add');
@@ -41,13 +42,11 @@ Route::prefix('/movies')->middleware('auth')->group(function () {
 });
 
 Route::prefix('/movies')->group(function () {
-    Route::get('list', [MovieController::class, 'listADM'])->name('movie.list');
-    Route::post('list', [MovieController::class, 'listADM']);
+    Route::get('list', [MovieController::class, 'list'])->name('movie.list');
+    Route::post('list', [MovieController::class, 'list']);
 });
 
 // Route::get('/', function () {
 // });
 
-Route::get('/movie', function () {
-    return view('adm.movie.add');
-});
+Route::get('/movie/{id}', [MovieController::class, 'movieInfo']);
